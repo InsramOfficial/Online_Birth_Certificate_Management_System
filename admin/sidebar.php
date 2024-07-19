@@ -27,15 +27,17 @@
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Birth Certificates App</h6>
-                <a class="collapse-item" href="buttons.html">Add Details</a>
-                <a class="collapse-item" href="cards.html">Manage Details</a>
+                <a class="collapse-item" href="new-applications.php">New Application</a>
+                <a class="collapse-item" href="verified-application.php">Verified Application</a>
+                <a class="collapse-item" href="rejected-applications.php">Rejected Application</a>
+                <a class="collapse-item" href="all-applications.php">All Application</a>
             </div>
         </div>
 
     </li>
 
     <li class="nav-item">
-        <a class="nav-link" href="index.php">
+        <a class="nav-link" href="between-dates-report.php">
             <i class="fa-regular fa-calendar-days"></i>
             <span>B/W Dates Report</span></a>
     </li>
