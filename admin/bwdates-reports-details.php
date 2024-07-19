@@ -1,14 +1,19 @@
 <?php
 
+$delete = false;
 include ('connection.php');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fromdate']) && isset($_POST['fromto'])) {
-    $fromdate = $_POST['fromdate'];
-    $fromto = $_POST['fromto'];
-    header("Location:bwdates-reports-details.php?fromdate=$fromdate&fromto=$fromto");
-}
+if (isset($_GET['action']) && $_GET['action'] == "delete" && isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $sql = "DELETE FROM `tblapplication` WHERE  id=$id ";
+    $result = mysqli_query($conn, $sql);
 
-?>
+    if ($result) {
+        $delete = true;
+    } else {
+        echo "The Query not executed Sucessfully because of " . mysqli_error($conn);
+    }
+} ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,42 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fromdate']) && isset($
         .card {
             margin: 20px 0;
         }
-
-
-        .container {
-            width: 96%;
-            padding: 0 20px;
-            border-radius: 5px;
-        }
-
-        .content {
-            display: flex;
-            flex-direction: column;
-            background-color: rebeccapurple;
-        }
-
-        .flex {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            text-align: right;
-            margin: 10px;
-        }
-
-        h3 {
-            padding-top: 10px;
-
-        }
-
-        input {
-            margin: 8px;
-        }
-
-        .button {
-            margin-left: 250px;
-        }
     </style>
 
 </head>
@@ -105,33 +74,72 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fromdate']) && isset($
 
                 <!-- Topbar -->
                 <?php include ('navbar.php');
-
+                if ($delete) {
+                    echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+<strong>Success!</strong> Application has been deleted successfully.
+<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+</div>";
+                }
                 ?>
 
                 <!-- End of Topbar -->
 
-                <div style=" background-color: #EBEBEB;" class="container ">
-                    <h3>Between Dates Report</h3>
-                    <hr>
-                    <form action="between-dates-report.php" method="POST">
-                        <div class="row pb-4">
+                <div class="container">
+                    <table id="example" class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>S.no</th>
+                                <th>Application Number</th>
+                                <th>Name</th>
+                                <th>Mobile Number</th>
+                                <th>Father's Name</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $fromdate = $_GET['fromdate'];
+                            $fromto = $_GET['fromto'];
+                            $sql = "select * from `tblapplication` where `Dateofapply` between '$fromdate' and '$fromto' limit 100;";
+                            $result = mysqli_query($conn, $sql);
+                            $sno = 0;
+                            echo "<div class='alert alert-success alert-dismissible fade show text-center' role='alert'>
+                        <strong>Your Results  from '$fromdate' to '$fromto'</strong> 
+                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                    </div>";
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    $sno += 1;
 
-                            <div class="col-md-3 flex">
-                                <label for="">Form Date</label>
-                                <label for="">To Date</label>
-                            </div>
-                            <div class="col-md-9  flex">
-                                <input type="date" class="form-control" required name="fromdate" aria-label="Username"
-                                    aria-describedby="basic-addon1">
-                                <input type="date" class="form-control" required name="fromto" aria-label="Username"
-                                    aria-describedby="basic-addon1">
-                            </div>
+                                    echo "<tr>
+                                        <td>{$sno}</td>
+                                        <td>" . $row['ApplicationID'] . "</td>
+                                        <td>" . $row['FullName'] . "</td>
+                                        <td>" . $row['MobileNumber'] . "</td>
+                                        <td>" . $row['NameofFather'] . "</td>
+                                        <td>" . $row['Status'] . "</td>
+                                      <td><a href='view-application.php?id=" . $row['ID'] . "' class='btn btn-primary btn-sm'>View Appli </a> 
+                                      <a  href='?action=delete&id=" . $row['ID'] . "' class='btn btn-danger btn-sm ms-2'>Delete</a></td>
+                                    </tr>";
+                                }
+                            }
+                            ?>
 
-                        </div>
-                        <div class="button">
-                            <button class="btn btn-success mb-5" type="submit">Submit</button>
-                        </div>
-                    </form>
+
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>S.no</th>
+                                <th>Application Number</th>
+                                <th>Name</th>
+                                <th>Mobile Number</th>
+                                <th>Father's Name</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
             <!-- End of Main Content -->

@@ -2,11 +2,6 @@
 
 include ('connection.php');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fromdate']) && isset($_POST['fromto'])) {
-    $fromdate = $_POST['fromdate'];
-    $fromto = $_POST['fromto'];
-    header("Location:bwdates-reports-details.php?fromdate=$fromdate&fromto=$fromto");
-}
 
 ?>
 
@@ -67,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fromdate']) && isset($
         }
 
         label {
-            text-align: right;
+            text-align: center;
             margin: 10px;
         }
 
@@ -81,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fromdate']) && isset($
         }
 
         .button {
-            margin-left: 250px;
+            margin-left: 430px;
         }
     </style>
 
@@ -111,20 +106,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fromdate']) && isset($
                 <!-- End of Topbar -->
 
                 <div style=" background-color: #EBEBEB;" class="container ">
-                    <h3>Between Dates Report</h3>
+                    <h3>Search All Application</h3>
                     <hr>
                     <form action="between-dates-report.php" method="POST">
                         <div class="row pb-4">
 
-                            <div class="col-md-3 flex">
-                                <label for="">Form Date</label>
-                                <label for="">To Date</label>
+                            <div class="col-md-5 flex">
+                                <label for="">Search by Application Number /Name/Father Name / Mother Name</label>
+
                             </div>
-                            <div class="col-md-9  flex">
-                                <input type="date" class="form-control" required name="fromdate" aria-label="Username"
-                                    aria-describedby="basic-addon1">
-                                <input type="date" class="form-control" required name="fromto" aria-label="Username"
-                                    aria-describedby="basic-addon1">
+                            <div class="col-md-7  flex">
+                                <input type="text" class="form-control" required placeholder="Application Number"
+                                    name="forminput" aria-label="Username" aria-describedby="basic-addon1">
+
                             </div>
 
                         </div>
@@ -132,6 +126,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['fromdate']) && isset($
                             <button class="btn btn-success mb-5" type="submit">Submit</button>
                         </div>
                     </form>
+                    <?php
+                    $forminput = $_POST['forminput'];
+                    if ($show) {
+                        echo "<div class='alert alert-success alert-dismissible fade show text-center' role='alert'>
+                        <strong>Your Results  For '$forminput'</strong> 
+                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                    </div>";
+                    }
+                    $show = false;
+                    if (isset($forminput) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+
+                        $sql = "SELECT * FROM `tblapplication` WHERE `ApplicationID` = '$forminput' OR `FullName` = '$forminput' OR `NameofFather` = '$forminput' OR `NameOfMother` = '$forminput' LIMIT 25;";
+                        $result = mysqli_query($conn, $sql);
+                        if ($result) {
+                            if (mysqli_num_rows($result) > 0) {
+                                $show = true;
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    $sno += 1;
+
+                                    echo "<tr>
+                                            <td>{$sno}</td>
+                                            <td>" . $row['ApplicationID'] . "</td>
+                                            <td>" . $row['FullName'] . "</td>
+                                            <td>" . $row['MobileNumber'] . "</td>
+                                            <td>" . $row['NameofFather'] . "</td>
+                                            <td>" . $row['Status'] . "</td>
+                                          <td><a href='view-application.php?id=" . $row['ID'] . "' class='btn btn-primary btn-sm'>View Appli </a> 
+                                          <a  href='?action=delete&id=" . $row['ID'] . "' class='btn btn-danger btn-sm ms-2'>Delete</a></td>
+                                        </tr>";
+                                }
+                            }
+
+                        }
+                    } ?>
                 </div>
             </div>
             <!-- End of Main Content -->

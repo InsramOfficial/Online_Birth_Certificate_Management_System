@@ -42,7 +42,7 @@
             <span>B/W Dates Report</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="index.php">
+        <a class="nav-link" href="search.php">
             <i class="fa-brands fa-searchengin"></i>
             <span>Search</span></a>
     </li>
