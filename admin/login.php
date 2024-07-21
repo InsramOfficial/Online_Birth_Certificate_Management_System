@@ -106,9 +106,7 @@ if (isset($_SERVER['REQUEST_METHOD']) == 'POST' && isset($_POST['username']) & i
                                         echo "  <br>";
                                     }
                                     ?>
-                                    <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
-                                    </div>
+
                                     <div class="text-center">
                                         <a class="small" href="register.php">Create an Account!</a>
                                     </div>
