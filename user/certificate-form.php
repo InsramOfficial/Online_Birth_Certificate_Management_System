@@ -1,33 +1,3 @@
-<?php
-$insert = false;
-include ('connection.php');
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $dateofbirth = $_POST['date'];
-    $gender = $_POST['radio'];
-    $fullName = $_POST['fullName'];
-    $placeOfBirth = $_POST['placeOfBirth'];
-    $motherName = $_POST['motherName'];
-    $fatherName = $_POST['fatherName'];
-    $permanentAddress = $_POST['permanentAddress'];
-    $postalAddress = $_POST['postalAddress'];
-    $contactNumber = $_POST['contactNumber'];
-    $email = $_POST['email'];
-    $applicationID = uniqid();
-    $sql = "INSERT INTO tblapplication 
-    (ApplicationID, DateofBirth, Gender, FullName, PlaceofBirth,
-     NameofFather, NameOfMother, PermanentAdd, PostalAdd, MobileNumber, Email, Status) 
-    VALUES 
-    ('$applicationID', '$dateofbirth', '$gender', '$fullName', '$placeOfBirth',
-     '$fatherName', '$motherName', '$permanentAddress', '$postalAddress', '$contactNumber', '$email', 'Pending')";
-
-    $result = $conn->query($sql);
-    if (isset($result)) {
-        $insert = true;
-    }
-
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,13 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="../assets/css/sb-admin-2.min.css" rel="stylesheet">
 
     <style>
-        .greeting-banner {
-            background: linear-gradient(to right, #6a11cb, #2575fc);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
         .container {
             max-width: 800px;
             margin-top: 20px;
@@ -72,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 0.25rem;
         }
 
-        .btn-primary {
+        .submit {
             width: 100%;
             padding: 10px;
         }
@@ -81,11 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding: 20px;
             border-radius: 0.5rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .form-heading {
-            text-align: center;
-            margin-bottom: 20px;
         }
     </style>
 
@@ -98,7 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div id="wrapper">
 
         <!-- Sidebar -->
-        <?php include ('sidebar.php') ?>
+        <?php include ('sidebar.php');
+        ?>
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -108,18 +67,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div id="content">
 
                 <!-- Topbar -->
-                <?php include ('navbar.php')
-                    ?>
+                <?php include ('navbar.php');
+                $insert = false;
+                include ('../includes/connection.php');
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                    $dateofbirth = $_POST['date'];
+                    $gender = $_POST['radio'];
+                    $fullName = $_POST['fullName'];
+                    $placeOfBirth = $_POST['placeOfBirth'];
+                    $motherName = $_POST['motherName'];
+                    $fatherName = $_POST['fatherName'];
+                    $permanentAddress = $_POST['permanentAddress'];
+                    $postalAddress = $_POST['postalAddress'];
+                    $contactNumber = $_POST['contactNumber'];
+                    $email = $_POST['email'];
+                    $applicationID = uniqid();
+                    $sql = "INSERT INTO tblapplication 
+                      (UserID,ApplicationID, DateofBirth, Gender, FullName, PlaceofBirth,
+                       NameofFather, NameOfMother, PermanentAdd, PostalAdd, MobileNumber, Email, Status) 
+                      VALUES 
+                      ('$ID','$applicationID', '$dateofbirth', '$gender', '$fullName', '$placeOfBirth',
+                       '$fatherName', '$motherName', '$permanentAddress', '$postalAddress', '$contactNumber', '$email', 'Pending')";
+
+                    $result = $conn->query($sql);
+                    if (isset($result)) {
+                        $insert = true;
+                    }
+
+                }
+                ?>
 
                 <!-- End of Topbar -->
                 <?php
                 if ($insert) {
                     echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
-  <strong>Holy guacamole!</strong> Sucess! Your Application is Submitted Sucessfully
-  <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
-    <span aria-hidden='true'>&times;</span>
-  </button>
-</div>";
+                        <strong>Sucess!</strong>  Your Application is Submitted Sucessfully
+                        <button type='button' class='close' data-dismiss='alert' aria-label='Close'>
+                            <span aria-hidden='true'>&times;</span>
+                        </button>
+                        </div>";
                 } ?>
                 <div class="container  ">
                     <form action="certificate-form.php" method="post">
@@ -127,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="date">Date</label>
+                                    <label for="date">Date of Birth</label>
                                     <input type="date" class="form-control" required name="date" id="date">
                                 </div>
                                 <div class="form-group">
@@ -191,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary submit">Submit</button>
                     </form>
                 </div>
 
@@ -208,29 +194,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
+
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!-- Bootstrap core JavaScript-->
     <script src="../assets/vendor/jquery/jquery.min.js"></script>
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

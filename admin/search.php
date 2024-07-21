@@ -1,8 +1,19 @@
 <?php
 
-include ('connection.php');
+include ('../includes/connection.php');
 
+$delete = false;
+if (isset($_GET['action']) && $_GET['action'] == "delete" && isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $sql = "DELETE FROM `tblapplication` WHERE  id=$id ";
+    $result = mysqli_query($conn, $sql);
 
+    if ($result) {
+        $delete = true;
+    } else {
+        echo "The Query not executed Sucessfully because of " . mysqli_error($conn);
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -100,7 +111,12 @@ include ('connection.php');
 
                 <!-- Topbar -->
                 <?php include ('navbar.php');
-
+                if ($delete) {
+                    echo "<div class='alert alert-danger alert-dismissible fade show text-center' role='alert'>
+                            <strong>Application has been deleted successfully.</strong> 
+                            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                        </div>";
+                }
                 ?>
 
                 <!-- End of Topbar -->
@@ -108,7 +124,7 @@ include ('connection.php');
                 <div style=" background-color: #EBEBEB;" class="container ">
                     <h3>Search All Application</h3>
                     <hr>
-                    <form action="between-dates-report.php" method="POST">
+                    <form action="search.php" method="POST">
                         <div class="row pb-4">
 
                             <div class="col-md-5 flex">
@@ -126,41 +142,78 @@ include ('connection.php');
                             <button class="btn btn-success mb-5" type="submit">Submit</button>
                         </div>
                     </form>
-                    <?php
-                    $forminput = $_POST['forminput'];
-                    if ($show) {
-                        echo "<div class='alert alert-success alert-dismissible fade show text-center' role='alert'>
-                        <strong>Your Results  For '$forminput'</strong> 
-                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                    </div>";
-                    }
-                    $show = false;
-                    if (isset($forminput) && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
-                        $sql = "SELECT * FROM `tblapplication` WHERE `ApplicationID` = '$forminput' OR `FullName` = '$forminput' OR `NameofFather` = '$forminput' OR `NameOfMother` = '$forminput' LIMIT 25;";
-                        $result = mysqli_query($conn, $sql);
-                        if ($result) {
-                            if (mysqli_num_rows($result) > 0) {
-                                $show = true;
-                                while ($row = mysqli_fetch_assoc($result)) {
-                                    $sno += 1;
 
-                                    echo "<tr>
-                                            <td>{$sno}</td>
-                                            <td>" . $row['ApplicationID'] . "</td>
-                                            <td>" . $row['FullName'] . "</td>
-                                            <td>" . $row['MobileNumber'] . "</td>
-                                            <td>" . $row['NameofFather'] . "</td>
-                                            <td>" . $row['Status'] . "</td>
-                                          <td><a href='view-application.php?id=" . $row['ID'] . "' class='btn btn-primary btn-sm'>View Appli </a> 
-                                          <a  href='?action=delete&id=" . $row['ID'] . "' class='btn btn-danger btn-sm ms-2'>Delete</a></td>
-                                        </tr>";
-                                }
-                            }
 
-                        }
-                    } ?>
                 </div>
+            </div>
+            <div class="container">
+                <table id="example" class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>S.no</th>
+                            <th>Application Number</th>
+                            <th>Name</th>
+                            <th>Mobile Number</th>
+                            <th>Father's Name</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $show = false;
+
+                        if (isset($_POST['forminput']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+
+                            $forminput = $_POST['forminput'];
+                            $sql = "SELECT * FROM `tblapplication` WHERE `ApplicationID` = '$forminput' OR `FullName` = '$forminput' OR `NameofFather` = '$forminput' OR `NameOfMother` = '$forminput' LIMIT 25;";
+                            $result = mysqli_query($conn, $sql);
+                            $sno = 0;
+
+                            if ($result) {
+                                if (mysqli_num_rows($result) > 0) {
+                                    $show = true;
+                                    if ($show) {
+                                        echo "<div class='alert alert-success alert-dismissible fade  mt-3 show text-center' role='alert'>
+                                        <strong>Your Results  For '$forminput'</strong> 
+                                      
+                                    </div>";
+                                    }
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        $sno += 1;
+
+                                        echo "<tr>
+                                                <td>{$sno}</td>
+                                                <td>" . $row['ApplicationID'] . "</td>
+                                                <td>" . $row['FullName'] . "</td>
+                                                <td>" . $row['MobileNumber'] . "</td>
+                                                <td>" . $row['NameofFather'] . "</td>
+                                                <td>" . $row['Status'] . "</td>
+                                              <td><a href='view-application.php?id=" . $row['ID'] . "' class='btn btn-primary btn-sm'>View Appli </a> 
+                                               <a  href='?action=delete&id=" . $row['ID'] . "' class='btn btn-danger btn-sm ms-2'>Delete</a></td>
+                                            </tr>";
+                                    }
+                                }
+
+                            }
+                        }
+                        ?>
+
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>S.no</th>
+                            <th>Application Number</th>
+                            <th>Name</th>
+                            <th>Mobile Number</th>
+                            <th>Father's Name</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
             <!-- End of Main Content -->
 
@@ -176,25 +229,7 @@ include ('connection.php');
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     <!-- Bootstrap core JavaScript-->
     <script src="../assets/vendor/jquery/jquery.min.js"></script>
     <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>

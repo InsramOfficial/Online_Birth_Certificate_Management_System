@@ -1,6 +1,6 @@
 <?php
 
-include ('connection.php');
+include ('../includes/connection.php');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id = $_POST['id'];
     $Remarks = $_POST['Remarks'];
@@ -15,6 +15,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "this query is not executed becz of " . mysqli_error($conn);
     }
 }
-
-
 ?>

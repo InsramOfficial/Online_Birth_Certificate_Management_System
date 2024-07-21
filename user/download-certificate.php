@@ -1,5 +1,5 @@
 <?php
-include ('connection.php');
+include ('../includes/connection.php');
 require_once ('../admin/dompdf/autoload.inc.php');
 use Dompdf\Dompdf;
 
